@@ -1,3 +1,8 @@
 /**
  * MP Portfolio admin/css
  */
+
+#portfolio_item_client{
+	padding: 8px;
+	width: 100%;
+}

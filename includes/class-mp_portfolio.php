@@ -159,6 +159,7 @@ class mp_portfolio {
 		$this->loader->add_action( 'init', $plugin_admin, 'mp_portfolio_custom_post_type' );
 		$this->loader->add_action( 'init', $plugin_admin, 'mp_portfolio_register_taxonomies' );
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'mp_portfolio_meta_box' );
+		$this->loader->add_action( 'save_post', $plugin_admin, 'mp_portfolio_save_post' );
 
 	}
 

@@ -193,10 +193,59 @@ class mp_portfolio_Admin {
 		// remove_meta_box( 'postimagediv', 'portfolio', 'side' );
 
 		add_meta_box( 'portfolio_gallery', __('Gallery', 'mp_portfolio'), array( $this, 'mp_portfolio_gallery_callback'), 'portfolio', 'advanced', 'default' );
+		add_meta_box( 'portfolio_client', __('Client', 'mp_portfolio'), array( $this, 'mp_portfolio_client_callback'), 'portfolio', 'side', 'default' );
 	}
 
 	public function mp_portfolio_gallery_callback() {
 		echo "hola";
+	}
+
+	public function mp_portfolio_client_callback( $post ) {
+		// Add nonce for security and authentication.
+		wp_nonce_field( 'mp_portfolio_client_nonce_action', 'mp_portfolio_client_nonce' );
+
+		// Use get_post_meta to retrieve an existing value from the database.
+        $portfolio_item_client = get_post_meta( $post->ID, 'portfolio_item_client', true );
+		?>
+		<input type="text" name="portfolio_item_client" id="portfolio_item_client" value="<?php echo $portfolio_item_client; ?>">
+		<?php
+	}
+
+	public function mp_portfolio_save_post( $post_id ) {
+		// Add nonce for security and authentication.
+		$nonce_name   = isset( $_POST['mp_portfolio_client_nonce'] ) ? $_POST['mp_portfolio_client_nonce'] : '';
+		$nonce_action = 'mp_portfolio_client_nonce_action';
+
+		// Get values
+		$portfolio_item_client = isset( $_POST['portfolio_item_client'] ) ? $_POST['portfolio_item_client'] : '';
+
+		// Check if nonce is set.
+        if ( ! isset( $nonce_name ) ) {
+            echo "not set";
+        }
+
+		// Check if nonce is valid.
+        if ( ! wp_verify_nonce( $nonce_name, $nonce_action ) ) {
+            return;
+        }
+
+		// Check if user has permissions to save data.
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            return;
+        }
+
+        // Check if not an autosave.
+        if ( wp_is_post_autosave( $post_id ) ) {
+            return;
+        }
+ 
+        // Check if not a revision.
+        if ( wp_is_post_revision( $post_id ) ) {
+            return;
+        }
+
+        // Save data
+        update_post_meta( $post_id, 'portfolio_item_client', $portfolio_item_client );
 	}
 
 }
